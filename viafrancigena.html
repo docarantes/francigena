@@ -150,6 +150,33 @@ textarea.text-inp:focus{border-color:var(--terraL);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 ::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:var(--cremeDD);border-radius:2px;}
 
+/* ── Setup modal (first launch) ── */
+.setup-bg{display:none;position:fixed;inset:0;background:rgba(61,43,31,0.75);z-index:400;align-items:center;justify-content:center;padding:24px;}
+.setup-bg.open{display:flex;}
+.setup-box{background:var(--creme);border-radius:20px;padding:28px 24px;width:100%;max-width:380px;}
+.setup-title{font-family:Georgia,serif;font-size:18px;font-weight:600;color:var(--marrom);margin-bottom:6px;}
+.setup-sub{font-family:Georgia,serif;font-style:italic;font-size:13px;color:var(--cinza);line-height:1.55;margin-bottom:20px;}
+.setup-inp{width:100%;border:1px solid var(--cremeDD);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--marrom);background:var(--branco);outline:none;font-family:Georgia,serif;margin-bottom:10px;}
+.setup-inp:focus{border-color:var(--terra);}
+.setup-skip{width:100%;padding:11px;background:none;border:1px solid var(--cremeDD);border-radius:10px;font-family:Georgia,serif;font-size:13px;color:var(--cinza);cursor:pointer;margin-top:6px;}
+.setup-save{width:100%;padding:13px;background:var(--terra);color:var(--creme);border:none;border-radius:10px;font-family:Georgia,serif;font-size:13px;letter-spacing:1px;cursor:pointer;}
+.setup-save:active{opacity:0.85;}
+
+/* ── Setup screen (first run) ── */
+.setup-screen{display:none;position:fixed;inset:0;background:linear-gradient(160deg,var(--terra) 0%,var(--marrom) 100%);z-index:500;flex-direction:column;align-items:center;justify-content:center;padding:32px 24px;max-width:430px;margin:0 auto;}
+.setup-screen.visible{display:flex;}
+.setup-logo{font-size:56px;margin-bottom:20px;}
+.setup-title{font-family:Georgia,serif;font-size:22px;font-weight:600;color:var(--creme);text-align:center;margin-bottom:6px;}
+.setup-sub{font-family:Georgia,serif;font-style:italic;font-size:14px;color:var(--ouroL);text-align:center;margin-bottom:32px;line-height:1.5;}
+.setup-label{font-family:Georgia,serif;font-size:12px;color:rgba(245,237,216,0.7);margin-bottom:8px;align-self:flex-start;letter-spacing:0.5px;}
+.setup-inp{width:100%;padding:14px 16px;border:1.5px solid rgba(245,237,216,0.25);border-radius:12px;background:rgba(245,237,216,0.1);color:var(--creme);font-size:15px;font-family:Georgia,serif;outline:none;letter-spacing:0.5px;}
+.setup-inp::placeholder{color:rgba(245,237,216,0.35);}
+.setup-inp:focus{border-color:var(--ouroL);}
+.setup-hint{font-size:11px;color:rgba(245,237,216,0.45);margin-top:8px;margin-bottom:28px;align-self:flex-start;font-family:Georgia,serif;font-style:italic;line-height:1.5;}
+.setup-btn{width:100%;padding:15px;background:var(--ouro);color:var(--marrom);border:none;border-radius:12px;font-family:Georgia,serif;font-size:14px;font-weight:600;letter-spacing:1px;cursor:pointer;}
+.setup-btn:active{opacity:0.85;}
+.setup-skip{margin-top:16px;font-family:Georgia,serif;font-style:italic;font-size:12px;color:rgba(245,237,216,0.4);cursor:pointer;text-decoration:underline;}
+
 /* ── Export button ── */
 .export-bar{padding:8px 12px;background:var(--creme);border-bottom:1px solid var(--cremeDD);flex-shrink:0;}
 .btn-export{width:100%;padding:12px;background:linear-gradient(135deg,var(--terra),var(--marrom));color:var(--creme);border:none;border-radius:10px;font-family:Georgia,serif;font-size:13px;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
@@ -171,12 +198,8 @@ textarea.text-inp:focus{border-color:var(--terraL);}
 .btn-share:active{opacity:0.82;}
 
 /* ── Whisper transcription ── */
-.whisper-key-wrap{margin-top:10px;display:flex;gap:6px;align-items:center;}
-.whisper-key-inp{flex:1;border:1px solid var(--cremeDD);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--marrom);background:var(--creme);outline:none;font-family:Georgia,serif;}
 .whisper-status{font-size:11px;color:var(--cinza);font-family:Georgia,serif;font-style:italic;margin-top:6px;min-height:16px;}
 .whisper-result{font-family:Georgia,serif;font-size:14px;line-height:1.6;color:var(--marrom);background:var(--branco);border:1px solid var(--cremeDD);border-radius:8px;padding:10px 12px;margin-top:8px;display:none;white-space:pre-wrap;}
-.btn-transcribe{padding:8px 14px;background:var(--verde);color:var(--creme);border:none;border-radius:8px;font-size:11px;cursor:pointer;font-family:Georgia,serif;letter-spacing:0.5px;white-space:nowrap;flex-shrink:0;}
-.btn-transcribe:disabled{opacity:0.5;cursor:default;}
 </style>
 </head>
 <body>
@@ -241,10 +264,6 @@ textarea.text-inp:focus{border-color:var(--terraL);}
               <div class="voice-dur" id="voice-dur">0:00</div>
               <div class="voice-status" id="voice-status">Toca para gravar</div>
             </div>
-            <div class="whisper-key-wrap">
-              <input class="whisper-key-inp" id="whisper-key" type="password" placeholder="Chave OpenAI (sk-...)">
-              <button class="btn-transcribe" id="btn-transcribe" onclick="transcribeAudio()" disabled>🔤 Transcrever</button>
-            </div>
             <div class="whisper-status" id="whisper-status"></div>
             <div class="whisper-result" id="whisper-result"></div>
           </div>
@@ -302,6 +321,17 @@ textarea.text-inp:focus{border-color:var(--terraL);}
     <button class="tab-btn" id="tab-stats" onclick="switchTab('stats')"><span class="tab-icon">🗺️</span><span class="tab-lbl">Percurso</span></button>
   </div>
 </div>
+  <!-- SETUP MODAL (first launch) -->
+  <div class="setup-bg" id="setup-bg">
+    <div class="setup-box">
+      <div class="setup-title">Via Francigena 2026</div>
+      <p class="setup-sub">Para transcrição automática dos áudios, insere a tua chave OpenAI. Será guardada localmente e nunca partilhada. Podes saltar e configurar mais tarde.</p>
+      <input class="setup-inp" id="setup-key" type="password" placeholder="sk-..." autocomplete="off">
+      <button class="setup-save" onclick="saveSetupKey()">GUARDAR E COMEÇAR</button>
+      <button class="setup-skip" onclick="skipSetup()">Saltar por agora</button>
+    </div>
+  </div>
+
 <div class="toast" id="toast"></div>
 
 <script>
@@ -461,7 +491,8 @@ function openPanel(type){
   document.getElementById("input-panel").classList.add("open");
   if(type==="text") document.getElementById("text-inp").value="";
   if(type==="photo"){document.getElementById("photo-prev-wrap").style.display="none";document.getElementById("photo-drop").style.display="block";document.getElementById("caption-inp").value="";}
-  if(type==="voice"){resetVoice();document.getElementById('whisper-status').textContent='';document.getElementById('whisper-result').style.display='none';document.getElementById('btn-transcribe').disabled=true;}
+  if(type==="voice"){resetVoice();document.getElementById('whisper-status').textContent='';document.getElementById('whisper-result').style.display='none';
+  }
 }
 
 function closePanel(){
@@ -525,8 +556,8 @@ function stopRec(){
     audioDuration=fmt(recSecs);
     document.getElementById("voice-btn").classList.remove("rec");
     document.getElementById("voice-btn").textContent="▶";
-    document.getElementById("voice-status").textContent="Gravação pronta";
-    enableTranscribeBtn();}
+    document.getElementById("voice-status").textContent="A transcrever...";
+    setTimeout(transcribeAudio, 300);}
 }
 
 // ── SAVE ENTRY ───────────────────────────────────────────────
@@ -679,13 +710,11 @@ function shareExport(){
 
 // ── WHISPER TRANSCRIPTION ────────────────────────────────────
 async function transcribeAudio(){
-  const key=document.getElementById("whisper-key").value.trim();
-  if(!key){showToast("Insere a chave OpenAI primeiro");return;}
+  const key=localStorage.getItem("vf_openai_key")||"";
+  if(!key){showToast("Chave OpenAI não configurada");return;}
   if(!audioUrl){showToast("Grava um áudio primeiro");return;}
-  const btn=document.getElementById("btn-transcribe");
   const status=document.getElementById("whisper-status");
   const result=document.getElementById("whisper-result");
-  btn.disabled=true;
   status.textContent="A transcrever... aguarda.";
   result.style.display="none";
   try{
@@ -714,14 +743,9 @@ async function transcribeAudio(){
     status.textContent="Erro: "+e.message;
     showToast("Erro na transcrição: "+e.message);
   }finally{
-    btn.disabled=false;
   }
 }
 
-// Enable transcribe button when audio is ready
-function enableTranscribeBtn(){
-  document.getElementById("btn-transcribe").disabled=false;
-}
 
 
 // ── PWA / FULLSCREEN ─────────────────────────────────────────
@@ -746,6 +770,56 @@ document.addEventListener('click',function tryFS(){
   document.removeEventListener('click',tryFS);
 },{once:true});
 
+
+// ── FIRST LAUNCH SETUP ───────────────────────────────────────
+function checkFirstLaunch(){
+  const key=localStorage.getItem("vf_openai_key");
+  const skipped=localStorage.getItem("vf_setup_done");
+  if(!key && !skipped){
+    document.getElementById("setup-bg").classList.add("open");
+  }
+}
+function saveSetupKey(){
+  const k=document.getElementById("setup-key").value.trim();
+  if(k){
+    localStorage.setItem("vf_openai_key",k);
+    localStorage.setItem("vf_setup_done","1");
+    document.getElementById("setup-bg").classList.remove("open");
+    showToast("✓ Chave guardada — transcrição activada");
+  } else {
+    document.getElementById("setup-key").focus();
+  }
+}
+function skipSetup(){
+  localStorage.setItem("vf_setup_done","1");
+  document.getElementById("setup-bg").classList.remove("open");
+}
+
+
+// ── SETUP (FIRST RUN) ────────────────────────────────────────
+function checkSetup(){
+  const key=localStorage.getItem("vf_openai_key");
+  if(!key){
+    document.getElementById("setup-screen").classList.add("visible");
+    return false;
+  }
+  return true;
+}
+function finishSetup(){
+  const key=document.getElementById("setup-key").value.trim();
+  if(!key){
+    document.getElementById("setup-key").style.borderColor="#c0392b";
+    setTimeout(()=>document.getElementById("setup-key").style.borderColor="",1500);
+    return;
+  }
+  localStorage.setItem("vf_openai_key",key);
+  document.getElementById("setup-screen").classList.remove("visible");
+}
+function skipSetup(){
+  localStorage.setItem("vf_openai_key","");
+  document.getElementById("setup-screen").classList.remove("visible");
+}
+
 // ── INIT ─────────────────────────────────────────────────────
 diary=loadDiary();
 currentDay=initDay();
@@ -753,6 +827,7 @@ updateHeader();
 renderGuide();
 renderDiary();
 renderStats();
+
 </script>
 </body>
 </html>
