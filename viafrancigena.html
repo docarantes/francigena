@@ -3,14 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#6B4226">
-<rect width='100' height='100' fill='%236B4226'/><text y='75' font-size='70' x='15'>🛤️</text></svg>\", \"sizes\": \"any\", \"type\": \"image/svg+xml\"}]
-}">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#6B4226">
 <title>Via Francigena 2026 · Paulo</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -152,6 +148,34 @@ textarea.text-inp:focus{border-color:var(--terraL);}
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--marrom);color:var(--creme);padding:10px 20px;border-radius:20px;font-size:13px;opacity:0;transition:all 0.25s;pointer-events:none;z-index:200;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,0.3);}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 ::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-thumb{background:var(--cremeDD);border-radius:2px;}
+
+/* ── Export button ── */
+.export-bar{padding:8px 12px;background:var(--creme);border-bottom:1px solid var(--cremeDD);flex-shrink:0;}
+.btn-export{width:100%;padding:12px;background:linear-gradient(135deg,var(--terra),var(--marrom));color:var(--creme);border:none;border-radius:10px;font-family:Georgia,serif;font-size:13px;letter-spacing:1px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;}
+.btn-export:active{opacity:0.82;}
+
+/* ── Export modal ── */
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(61,43,31,0.65);z-index:300;align-items:flex-end;justify-content:center;}
+.modal-bg.open{display:flex;}
+.modal{background:var(--creme);border-radius:20px 20px 0 0;padding:20px 16px 36px;width:100%;max-width:430px;max-height:88vh;display:flex;flex-direction:column;gap:0;}
+.modal-hdr{display:flex;align-items:center;margin-bottom:8px;}
+.modal-title{font-family:Georgia,serif;font-size:15px;font-weight:600;color:var(--marrom);}
+.modal-close{margin-left:auto;background:none;border:none;font-size:26px;cursor:pointer;color:var(--cinza);line-height:1;}
+.modal-note{font-family:Georgia,serif;font-style:italic;font-size:12px;color:var(--cinza);line-height:1.55;margin-bottom:12px;flex-shrink:0;}
+.modal-body{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;margin-bottom:12px;min-height:0;}
+.export-txt{font-family:Georgia,serif;font-size:13px;line-height:1.65;color:var(--marrom);background:var(--branco);border:1px solid var(--cremeDD);border-radius:10px;padding:14px;white-space:pre-wrap;word-break:break-word;}
+.btn-copy{width:100%;padding:13px;background:var(--terra);color:var(--creme);border:none;border-radius:10px;font-family:Georgia,serif;font-size:13px;letter-spacing:1px;cursor:pointer;margin-bottom:8px;flex-shrink:0;display:block;}
+.btn-copy:active{opacity:0.82;}
+.btn-share{width:100%;padding:13px;background:var(--cremeD);color:var(--marrom);border:1px solid var(--cremeDD);border-radius:10px;font-family:Georgia,serif;font-size:13px;cursor:pointer;flex-shrink:0;display:block;}
+.btn-share:active{opacity:0.82;}
+
+/* ── Whisper transcription ── */
+.whisper-key-wrap{margin-top:10px;display:flex;gap:6px;align-items:center;}
+.whisper-key-inp{flex:1;border:1px solid var(--cremeDD);border-radius:8px;padding:8px 10px;font-size:12px;color:var(--marrom);background:var(--creme);outline:none;font-family:Georgia,serif;}
+.whisper-status{font-size:11px;color:var(--cinza);font-family:Georgia,serif;font-style:italic;margin-top:6px;min-height:16px;}
+.whisper-result{font-family:Georgia,serif;font-size:14px;line-height:1.6;color:var(--marrom);background:var(--branco);border:1px solid var(--cremeDD);border-radius:8px;padding:10px 12px;margin-top:8px;display:none;white-space:pre-wrap;}
+.btn-transcribe{padding:8px 14px;background:var(--verde);color:var(--creme);border:none;border-radius:8px;font-size:11px;cursor:pointer;font-family:Georgia,serif;letter-spacing:0.5px;white-space:nowrap;flex-shrink:0;}
+.btn-transcribe:disabled{opacity:0.5;cursor:default;}
 </style>
 </head>
 <body>
