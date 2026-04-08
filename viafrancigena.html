@@ -10,7 +10,7 @@
 <title>Via Francigena 2026 · Paulo</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
-html,body{height:100%;overflow:hidden;background:#F5EDD8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;}
+html,body{height:100%;height:100dvh;overflow:hidden;background:#F5EDD8;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;touch-action:manipulation;}
 :root{
   --terra:#6B4226;--terraL:#8B5E3C;
   --ouro:#C9943A;--ouroL:#E8B86D;
@@ -18,7 +18,7 @@ html,body{height:100%;overflow:hidden;background:#F5EDD8;font-family:-apple-syst
   --marrom:#3D2B1F;--marromL:#5C3D2E;
   --cinza:#8A7968;--branco:#FDFAF4;--verde:#5B7B4A;
 }
-#app{display:flex;flex-direction:column;height:100dvh;max-width:430px;margin:0 auto;background:var(--creme);}
+#app{display:flex;flex-direction:column;height:100dvh;max-width:430px;margin:0 auto;background:var(--creme);position:fixed;top:0;left:0;right:0;bottom:0;}
 /* Header */
 .hdr{background:var(--terra);color:var(--creme);padding:12px 16px 10px;display:flex;align-items:center;gap:12px;flex-shrink:0;box-shadow:0 2px 8px rgba(61,43,31,0.2);z-index:10;}
 .hdr-icon{font-size:22px;}
@@ -69,12 +69,13 @@ html,body{height:100%;overflow:hidden;background:#F5EDD8;font-family:-apple-syst
 .info-lbl{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--cinza);margin-bottom:4px;}
 .info-txt{font-family:Georgia,serif;font-size:12px;line-height:1.5;color:var(--marrom);}
 /* Diary */
-.diary-wrap{display:flex;flex-direction:column;flex:1;overflow:hidden;}
-.add-bar{display:flex;gap:8px;padding:10px 12px;background:var(--branco);border-bottom:1px solid var(--cremeDD);flex-shrink:0;}
+.diary-wrap{display:flex;flex-direction:column;flex:1;overflow:hidden;min-height:0;}
+.diary-fixed-top{flex-shrink:0;}
+.add-bar{display:flex;gap:8px;padding:10px 12px;background:var(--branco);border-bottom:1px solid var(--cremeDD);}
 .type-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 6px;background:var(--creme);border:1px solid var(--cremeDD);border-radius:10px;cursor:pointer;font-size:9px;color:var(--cinza);text-transform:uppercase;letter-spacing:0.5px;}
 .type-btn.active{background:var(--terra);border-color:var(--terra);color:var(--creme);}
 .type-icon{font-size:20px;line-height:1;}
-.input-panel{background:var(--branco);border-bottom:1px solid var(--cremeDD);padding:12px;flex-shrink:0;display:none;}
+.input-panel{background:var(--branco);border-bottom:1px solid var(--cremeDD);padding:12px;flex-shrink:0;display:none;max-height:60vh;overflow-y:auto;}
 .input-panel.open{display:block;}
 .ip-header{display:flex;align-items:center;margin-bottom:10px;}
 .ip-title{font-family:Georgia,serif;font-size:11px;color:var(--terra);text-transform:uppercase;letter-spacing:1px;}
@@ -97,7 +98,7 @@ textarea.text-inp:focus{border-color:var(--terraL);}
 .btn-loc{display:flex;align-items:center;gap:5px;padding:8px 12px;background:var(--creme);border:1px solid var(--cremeDD);border-radius:8px;font-size:11px;color:var(--verde);cursor:pointer;}
 .btn-loc.got{background:rgba(91,123,74,0.1);border-color:var(--verde);}
 .btn-save{flex:1;padding:10px;background:var(--terra);color:var(--creme);border:none;border-radius:8px;font-family:Georgia,serif;font-size:12px;cursor:pointer;letter-spacing:1px;}
-.entries{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px;display:flex;flex-direction:column;gap:10px;}
+.entries{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px;display:flex;flex-direction:column;gap:10px;min-height:0;}
 .empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--cinza);padding:40px 20px;text-align:center;}
 .empty-icon{font-size:48px;opacity:0.35;margin-bottom:12px;}
 .empty-txt{font-family:Georgia,serif;font-style:italic;font-size:16px;line-height:1.6;}
@@ -208,6 +209,7 @@ textarea.text-inp:focus{border-color:var(--terraL);}
     <!-- DIARY -->
     <div class="screen" id="screen-diary">
       <div class="diary-wrap">
+        <div class="diary-fixed-top">
         <div class="add-bar">
           <button class="type-btn" id="tbtn-text" onclick="openPanel('text')"><span class="type-icon">✏️</span>Texto</button>
           <button class="type-btn" id="tbtn-voice" onclick="openPanel('voice')"><span class="type-icon">🎙️</span>Voz</button>
@@ -254,6 +256,7 @@ textarea.text-inp:focus{border-color:var(--terraL);}
         <div class="export-bar">
           <button class="btn-export" onclick="exportDay()">📤 Exportar dia para o Claude</button>
         </div>
+        </div><!-- end diary-fixed-top -->
         <div class="entries" id="entries"></div>
       </div>
     </div>
