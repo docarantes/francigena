@@ -5,7 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
 <meta name="theme-color" content="#6B4226">
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiVmlhIEZyYW5jaWdlbmEgMjAyNiIsInNob3J0X25hbWUiOiJWaWEgRnJhbmNpZ2VuYSIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjRjVFREQ4IiwidGhlbWVfY29sb3IiOiIjNkI0MjI2In0=">
 <title>Via Francigena 2026 · Paulo</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
@@ -433,7 +435,7 @@ function renderDiary(){
     } else {
       const bars=Array.from({length:28},(_,b)=>`<div class="audio-bar" style="height:${Math.max(3,4+Math.abs(Math.sin(b*0.8))*12)}px"></div>`).join("");
       body=`<div class="audio-player"><button class="audio-play" onclick="playAudio('${e.audioUrl}',this)">▶</button><div class="audio-wave">${bars}</div><span class="audio-dur">${e.duration}</span></div>`;
-      if(e.note) body+=`<div class="entry-caption-val">${esc(e.note)}</div>`;
+      if(e.transcript) body+=`<div class="entry-caption-val" style="margin-top:8px;font-style:normal;color:var(--marrom)">${esc(e.transcript)}</div>`;
     }
     return `<div class="entry-card">
       <div class="entry-hdr"><span class="entry-icon">${icon}</span><span class="entry-time">${e.time}</span>${locHtml}<button class="entry-del" onclick="deleteEntry(${i})">🗑</button></div>
@@ -585,12 +587,18 @@ function renderStats(){
 function jumpToDay(d){currentDay=d;switchTab("guide");updateHeader();renderGuide();renderDiary();}
 
 // ── INIT ─────────────────────────────────────────────────────
-diary=loadDiary();
-currentDay=initDay();
-updateHeader();
-renderGuide();
-renderDiary();
-renderStats();
+window.addEventListener("DOMContentLoaded", function(){
+  diary=loadDiary();
+  currentDay=initDay();
+  updateHeader();
+  renderGuide();
+  renderDiary();
+  renderStats();
+  // Show setup on first run
+  if(localStorage.getItem("vf_openai_key")===null){
+    document.getElementById("setup-screen").classList.add("visible");
+  }
+});
 
 
 // ── SETUP ────────────────────────────────────────────────────
