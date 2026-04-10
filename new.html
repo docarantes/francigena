@@ -432,7 +432,7 @@ function renderDiary(){
       if(e.caption) body+=`<div class="entry-caption-val">${esc(e.caption)}</div>`;
     } else {
       const bars=Array.from({length:28},(_,b)=>`<div class="audio-bar" style="height:${Math.max(3,4+Math.abs(Math.sin(b*0.8))*12)}px"></div>`).join("");
-      body=`<div class="audio-player"><button class="audio-play" onclick="playAudio('${e.audioUrl}',this)">▶</button><div class="audio-wave">${bars}</div><span class="audio-dur">${e.duration}</span></div>`;
+      body=`<div class="audio-player"><button class="audio-play" onclick="playAudio(${i},this)">▶</button><div class="audio-wave">${bars}</div><span class="audio-dur">${e.duration}</span></div>`;
       if(e.note) body+=`<div class="entry-caption-val">${esc(e.note)}</div>`;
     }
     return `<div class="entry-card">
@@ -448,9 +448,12 @@ function deleteEntry(i){
 }
 
 let currentAudio=null;
-function playAudio(url,btn){
+function playAudio(idx,btn){
+  const key=String(currentDay);
+  const entry=(diary[key]||[])[idx];
+  if(!entry||!entry.audioUrl){showToast("Áudio não disponível");return;}
   if(currentAudio){currentAudio.pause();currentAudio=null;}
-  currentAudio=new Audio(url);
+  currentAudio=new Audio(entry.audioUrl);
   currentAudio.play();
   btn.textContent="⏸";
   currentAudio.onended=()=>{btn.textContent="▶";currentAudio=null;};
@@ -523,7 +526,13 @@ async function startRec(){
     const stream=await navigator.mediaDevices.getUserMedia({audio:true});
     chunks=[];mediaRec=new MediaRecorder(stream);
     mediaRec.ondataavailable=e=>{if(e.data.size>0)chunks.push(e.data);};
-    mediaRec.onstop=()=>{const blob=new Blob(chunks,{type:"audio/webm"});audioUrl=URL.createObjectURL(blob);stream.getTracks().forEach(t=>t.stop());};
+    mediaRec.onstop=()=>{
+      const blob=new Blob(chunks,{type:"audio/webm"});
+      // Convert to base64 so it survives page reload
+      const reader=new FileReader();
+      reader.onloadend=()=>{audioUrl=reader.result;stream.getTracks().forEach(t=>t.stop());};
+      reader.readAsDataURL(blob);
+    };
     mediaRec.start();isRecording=true;recSecs=0;
     document.getElementById("voice-btn").classList.add("rec");
     document.getElementById("voice-btn").textContent="⏹";
@@ -553,7 +562,12 @@ function saveEntry(){
     entry.dataUrl=photoData;entry.caption=document.getElementById("caption-inp").value.trim();
   } else if(panelType==="voice"){
     if(!audioUrl){showToast("Grava um áudio primeiro");return;}
-    entry.audioUrl=audioUrl;entry.duration=audioDuration;if(window._lastTranscript){entry.transcript=window._lastTranscript;window._lastTranscript="";}
+    entry.audioUrl=audioUrl;
+    entry.duration=audioDuration;
+    // Read transcript from DOM at save time (async transcription may still be running)
+    const wrEl=document.getElementById("whisper-result");
+    const transcript=(wrEl&&wrEl.style.display!=="none")?wrEl.textContent.trim():"";
+    if(transcript) entry.transcript=transcript;
   }
   if(!diary[key])diary[key]=[];
   diary[key].push(entry);saveDiary();closePanel();renderDiary();renderStats();showToast("✓ Entrada guardada");
@@ -704,8 +718,9 @@ async function transcribeAudio(){
   status.textContent="A transcrever...";
   result.style.display="none";
   try{
-    var resp=await fetch(audioUrl);
-    var blob=await resp.blob();
+    // audioUrl is now a base64 data URL — convert to blob for the API
+    const res64=await fetch(audioUrl);
+    const blob=await res64.blob();
     var fd=new FormData();
     fd.append("file",blob,"audio.webm");
     fd.append("model","whisper-1");
