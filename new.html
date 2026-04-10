@@ -247,6 +247,7 @@ textarea.text-inp:focus{border-color:var(--terraL);}
             </div>
             <div class="whisper-status" id="whisper-status"></div>
             <div class="whisper-result" id="whisper-result"></div>
+            <input type="hidden" id="transcript-store" value="">
           </div>
           <div class="ip-actions">
             <button class="btn-loc" id="btn-loc" onclick="getLocation()">📍 <span id="loc-txt">Localização</span></button>
@@ -433,7 +434,8 @@ function renderDiary(){
     } else {
       const bars=Array.from({length:28},(_,b)=>`<div class="audio-bar" style="height:${Math.max(3,4+Math.abs(Math.sin(b*0.8))*12)}px"></div>`).join("");
       body=`<div class="audio-player"><button class="audio-play" onclick="playAudio(${i},this)">▶</button><div class="audio-wave">${bars}</div><span class="audio-dur">${e.duration}</span></div>`;
-      if(e.note) body+=`<div class="entry-caption-val">${esc(e.note)}</div>`;
+      if(e.transcript) body+=`<div class="entry-caption-val" style="font-style:normal;color:var(--marrom);margin-top:8px;font-size:14px;">${esc(e.transcript)}</div>`;
+      else if(e.note) body+=`<div class="entry-caption-val">${esc(e.note)}</div>`;
     }
     return `<div class="entry-card">
       <div class="entry-hdr"><span class="entry-icon">${icon}</span><span class="entry-time">${e.time}</span>${locHtml}<button class="entry-del" onclick="deleteEntry(${i})">🗑</button></div>
@@ -475,7 +477,7 @@ function openPanel(type){
   document.getElementById("input-panel").classList.add("open");
   if(type==="text") document.getElementById("text-inp").value="";
   if(type==="photo"){document.getElementById("photo-prev-wrap").style.display="none";document.getElementById("photo-drop").style.display="block";document.getElementById("caption-inp").value="";}
-  if(type==="voice"){resetVoice();var ws=document.getElementById('whisper-status');var wr=document.getElementById('whisper-result');if(ws)ws.textContent='';if(wr){wr.style.display='none';wr.textContent='';};window._lastTranscript='';}
+  if(type==="voice"){resetVoice();var ws=document.getElementById('whisper-status');var wr=document.getElementById('whisper-result');if(ws)ws.textContent='';if(wr){wr.style.display='none';wr.textContent='';};window._currentTranscript='';var ts=document.getElementById('transcript-store');if(ts)ts.value='';}
 }
 
 function closePanel(){
@@ -564,9 +566,8 @@ function saveEntry(){
     if(!audioUrl){showToast("Grava um áudio primeiro");return;}
     entry.audioUrl=audioUrl;
     entry.duration=audioDuration;
-    // Read transcript from DOM at save time (async transcription may still be running)
-    const wrEl=document.getElementById("whisper-result");
-    const transcript=(wrEl&&wrEl.style.display!=="none")?wrEl.textContent.trim():"";
+    const tsEl=document.getElementById("transcript-store");
+    const transcript=(tsEl&&tsEl.value.trim())||window._currentTranscript||"";
     if(transcript) entry.transcript=transcript;
   }
   if(!diary[key])diary[key]=[];
@@ -734,7 +735,8 @@ async function transcribeAudio(){
     status.textContent="✓ Transcrito";
     result.textContent=text;
     result.style.display="block";
-    window._lastTranscript=text;
+    window._currentTranscript=text;
+    document.getElementById("transcript-store").value=text;
   }catch(e){
     status.textContent="Erro: "+e.message;
   }
